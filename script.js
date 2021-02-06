@@ -126,9 +126,33 @@ const calcDisplaySummary = function (acc) {
   labelSumInterest.textContent = `${Math.trunc(interest)}€`;
 };
 
+const setLogOut = function () {
+  const tick = function () {
+    const min = String(Math.trunc(time / 60)).padStart(2, 0);
+    const sec = String(time % 60).padStart(2, 0);
+
+    labelTimer.textContent = `${min}:${sec}`;
+
+    if (time === 0) {
+      containerApp.style.opacity = 0;
+      labelWelcome.textContent = 'Log in to get started';
+      clearInterval(timer);
+    }
+
+    time--;
+  };
+
+  let time = 10;
+
+  tick();
+  const timer = setInterval(tick, 1000);
+
+  return timer;
+};
+
 // Event Handler
 
-let currentAccount;
+let currentAccount, timer;
 
 btnLogin.addEventListener('click', function (e) {
   e.preventDefault();
@@ -150,6 +174,11 @@ btnLogin.addEventListener('click', function (e) {
 
     //Clear input focus
     inputLoginPin.blur();
+
+    // timer
+
+    if (timer) clearInterval(timer);
+    timer = setLogOut();
 
     updateUI(currentAccount);
   }
@@ -175,6 +204,10 @@ btnTransfer.addEventListener('click', function (e) {
 
     updateUI(currentAccount);
   }
+
+  //Reset timer
+  clearInterval(timer);
+  timer = setLogOut();
 });
 
 btnLoan.addEventListener('click', function (e) {
@@ -189,6 +222,10 @@ btnLoan.addEventListener('click', function (e) {
     updateUI(currentAccount);
   }
   inputLoanAmount.value = '';
+
+  //Reset timer
+  clearInterval(timer);
+  timer = setLogOut();
 });
 
 btnClose.addEventListener('click', function (e) {
